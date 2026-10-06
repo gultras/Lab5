@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -54,20 +55,24 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
-    var inputSum by remember { mutableStateOf("1") }
-    var inputDish by remember { mutableStateOf("1") }
+    var inputSum by remember { mutableStateOf("") }
+    var inputDish by remember { mutableStateOf("") }
     var resultMessage by remember { mutableStateOf("") }
-    var sliderValue by remember { mutableStateOf(0f) }
+    var sliderValue by remember { mutableFloatStateOf(0f) }
     val discounts = listOf(3, 5, 7, 10)
-    var (selectedDiscount) = remember { mutableStateOf(discounts[0])}
-    val resultDiscount = when {
-        inputDish.toInt() > 10  -> discounts[3]
-        inputDish.toInt() > 5 -> discounts[2]
-        inputDish.toInt() > 2 -> discounts[1]
-        else -> discounts[0]
+    //var (selectedDiscount) = remember { mutableStateOf(discounts[0])}
+    val dishes = inputDish.toIntOrNull() ?: 0
+    val amount = inputSum.toFloatOrNull() ?: 0.0
+
+    val discountPercent = when (dishes) {
+        in 1..2 -> 3
+        in 3..5 -> 5
+        in 6..10 -> 7
+        else -> if (dishes > 10) 10 else 0
     }
-    val resultWithDiscount = inputSum.toFloat() - (inputSum.toFloat()*0.01*selectedDiscount)
-    val resultWithTips = resultWithDiscount.toFloat()+ (resultWithDiscount.toFloat()*0.01*sliderValue.toFloat())
+
+    val resultWithDiscount = amount.toFloat() - (amount.toFloat() * 0.01 * discountPercent)
+    val resultWithTips = resultWithDiscount.toFloat() + (resultWithDiscount.toFloat()*0.01*sliderValue.toFloat())
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -89,7 +94,6 @@ fun MainScreen(modifier: Modifier = Modifier) {
             onValueChange = { newText ->
                 if (newText.all { it.isDigit() }) {
                     inputSum = newText
-
                 }
             },
             //label = { Text("n") },
@@ -111,8 +115,8 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 onValueChange = { newText ->
                     if (newText.all { it.isDigit() }) {
                         inputDish = newText
-                        selectedDiscount = resultDiscount
                     }
+                    //selectedDiscount = resultDiscount
                 },
                 //label = { Text("n") },
                 singleLine = true
@@ -166,7 +170,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                     )
                 {
                     RadioButton(
-                        selected = (option == selectedDiscount ),
+                        selected = (option == discountPercent ),
                         onClick = {  }
                     )
                     Text(text = option.toString()+"%", fontSize = 24.sp)
