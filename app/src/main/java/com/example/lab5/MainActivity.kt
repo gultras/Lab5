@@ -54,12 +54,20 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
-    var inputSum by remember { mutableStateOf("") }
-    var inputDish by remember { mutableStateOf("") }
+    var inputSum by remember { mutableStateOf("1") }
+    var inputDish by remember { mutableStateOf("1") }
     var resultMessage by remember { mutableStateOf("") }
     var sliderValue by remember { mutableStateOf(0f) }
-    val discounts = listOf(2, 5, 7, 10)
+    val discounts = listOf(3, 5, 7, 10)
     var (selectedDiscount) = remember { mutableStateOf(discounts[0])}
+    val resultDiscount = when {
+        inputDish.toInt() > 10  -> discounts[3]
+        inputDish.toInt() > 5 -> discounts[2]
+        inputDish.toInt() > 2 -> discounts[1]
+        else -> discounts[0]
+    }
+    val resultWithDiscount = inputSum.toFloat() - (inputSum.toFloat()*0.01*selectedDiscount)
+    val resultWithTips = resultWithDiscount.toFloat()+ (resultWithDiscount.toFloat()*0.01*sliderValue.toFloat())
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -81,6 +89,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
             onValueChange = { newText ->
                 if (newText.all { it.isDigit() }) {
                     inputSum = newText
+
                 }
             },
             //label = { Text("n") },
@@ -102,6 +111,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 onValueChange = { newText ->
                     if (newText.all { it.isDigit() }) {
                         inputDish = newText
+                        selectedDiscount = resultDiscount
                     }
                 },
                 //label = { Text("n") },
@@ -165,17 +175,30 @@ fun MainScreen(modifier: Modifier = Modifier) {
             }
         }
 
+        Text("Результат")
+        ResultRow("Сумма заказа со скидкой ",String.format("%.2f",resultWithDiscount))
+        ResultRow("Сумма заказа с чаевыми ",String.format("%.2f",  resultWithTips))
+
+
+    }
+
+
+
 
 
 
     }
 
-
-
-
-
-
+@Composable
+private fun ResultRow(label: String, value: String, emphasized: Boolean = false) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(label)
+        Text(value)
     }
+}
 
 
 @Preview(showBackground = true)
