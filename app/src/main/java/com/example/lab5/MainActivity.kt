@@ -13,9 +13,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -27,9 +31,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.lab5.ui.theme.Lab5Theme
 
 class MainActivity : ComponentActivity() {
@@ -52,6 +58,8 @@ fun MainScreen(modifier: Modifier = Modifier) {
     var inputDish by remember { mutableStateOf("") }
     var resultMessage by remember { mutableStateOf("") }
     var sliderValue by remember { mutableStateOf(0f) }
+    val discounts = listOf(2, 5, 7, 10)
+    var (selectedDiscount) = remember { mutableStateOf(discounts[0])}
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -100,7 +108,9 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 singleLine = true
             )
         }
+
         Spacer(modifier = Modifier.width(16.dp))
+
         Text(
             text = "Чаевые"
         )
@@ -124,12 +134,49 @@ fun MainScreen(modifier: Modifier = Modifier) {
             )
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            Modifier.fillMaxWidth(),
+           // horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Скидка:"
+            )
+
+            Row(Modifier
+                .selectableGroup()
+                //.padding(16.dp)
+                ,
+                horizontalArrangement = Arrangement.SpaceBetween
+               // .fillMaxWidth()
+            ){
+            discounts.forEach { option  ->
+                Column(
+                    )
+                {
+                    RadioButton(
+                        selected = (option == selectedDiscount ),
+                        onClick = {  }
+                    )
+                    Text(text = option.toString()+"%", fontSize = 24.sp)
+                }
+             }
+            }
+        }
+
 
 
 
     }
 
-}
+
+
+
+
+
+    }
+
 
 @Preview(showBackground = true)
 @Composable
