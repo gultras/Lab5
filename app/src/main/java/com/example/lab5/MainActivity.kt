@@ -163,7 +163,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 //.padding(16.dp)
                 ,
                 horizontalArrangement = Arrangement.SpaceBetween
-               // .fillMaxWidth()
+               // .fillMaxWidth() ??
             ){
             discounts.forEach { option  ->
                 Column(
